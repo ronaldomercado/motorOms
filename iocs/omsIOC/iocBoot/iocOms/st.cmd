@@ -2,7 +2,7 @@
 
 ## The following is needed if your board support package doesn't at boot time
 ## automatically cd to the directory containing its startup script
-#cd "/home/oxygen40/KPETERSN/epics/motor-split/OMS/motorOmsBlank/iocs/omsIOC/iocBoot/iocOms"
+#cd "/home/USERNAME/epics/ioc/omsIOC/iocBoot/iocOms"
 
 < cdCommands
 #< ../nfsCommands
@@ -18,12 +18,27 @@ cd top
 dbLoadDatabase "dbd/oms.dbd"
 oms_registerRecordDeviceDriver pdbbase
 
-## Load record instances
-#dbLoadTemplate "db/oms.substitutions"
-#dbLoadRecords "db/oms.db", "user=kpetersn"
-
 cd startup
+
+## motorUtil (allstop & alldone)
+dbLoadRecords("$(MOTOR)/db/motorUtil.db", "P=oms:")
+
+## Support for the OMS MAXv (VxWorks shell or iocsh)
+#< MAXv.cmd
+#< MAXv.iocsh
+
+## Support for the OMS VME85
+#< VME58.cmd
+
+## Support for the OMS VME8 and VME44
+#< VME8.cmd
+
+## Support for the OMS PC68 and PC78 (requires asyn)
+#< PC68.cmd
+
 iocInit
 
-## Start any sequence programs
-#seq &sncxxx, "user=kpetersn"
+## motorUtil (allstop & alldone)
+motorUtilInit("oms:")
+
+# Boot complete
