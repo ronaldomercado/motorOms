@@ -23,8 +23,8 @@ CHECK_RELEASE = YES
 
 # Filter out architectures that don't have VMEbus support.  This also
 #   prevents the use of the OMS PC68 support on those architectures.
-CROSS_COMPILER_TARGET_ARCHS := $(filter-out \
-    RTEMS-uC5282 RTEMS-pc386, $(CROSS_COMPILER_TARGET_ARCHS))
+#CROSS_COMPILER_TARGET_ARCHS := $(filter-out \
+#    RTEMS-uC5282 RTEMS-pc386, $(CROSS_COMPILER_TARGET_ARCHS))
 
 # To install files into a location other than $(TOP) define
 #   INSTALL_LOCATION here.
