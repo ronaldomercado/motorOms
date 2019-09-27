@@ -107,12 +107,12 @@ int OmsPC68_num_cards = 0;
 static volatile int motionTO = 10;
 
 //OmsPC68 generic controller commands
-static char *oms_axis[] = {"X", "Y", "Z", "T", "U", "V", "R", "S"};
+static const char *oms_axis[] = {"X", "Y", "Z", "T", "U", "V", "R", "S"};
 
 
 /*----------------functions-----------------*/
 static int recv_mess(int, char *, int);
-static RTN_STATUS send_mess(int, char const *, char *name);
+static RTN_STATUS send_mess(int, const char *, const char *name);
 static void start_status(int card);
 static int set_status(int card, int signal);
 static long report(int level);
@@ -454,7 +454,7 @@ exit:
 /* send a message to the OmsPC68 board               */
 /* send_mess()                                       */
 /*****************************************************/
-static RTN_STATUS send_mess(int card, char const *com, char *name)
+static RTN_STATUS send_mess(int card, const char *com, const char *name)
 {
     struct OmsPC68controller    *cntrl;
     size_t              size,
@@ -770,7 +770,7 @@ static int motor_init()
             /* Try 3 times to connect to controller. */
             do
             {
-                send_mess (card_index, GET_IDENT, (char*) NULL);
+                send_mess (card_index, GET_IDENT, NULL);
                 status = recv_mess(card_index, (char *) pmotorState->ident, 1);
                 retry++;
             } while (status == 0 && retry < 3);
@@ -783,11 +783,11 @@ static int motor_init()
             pmotorState->motor_in_motion = 0;
             pmotorState->cmnd_response = false;
 
-            send_mess (card_index, ECHO_OFF, (char*) NULL);
-            send_mess (card_index, ERROR_CLEAR, (char*) NULL);
-            send_mess (card_index, STOP_ALL, (char*) NULL);
+            send_mess (card_index, ECHO_OFF, NULL);
+            send_mess (card_index, ERROR_CLEAR, NULL);
+            send_mess (card_index, STOP_ALL, NULL);
 
-            send_mess (card_index, ALL_POS, (char*) NULL);
+            send_mess (card_index, ALL_POS, NULL);
             recv_mess (card_index, axis_pos, 1);
 
             for (total_axis = 0, pos_ptr = epicsStrtok_r(axis_pos, ",", &tok_save);
@@ -822,7 +822,7 @@ static int motor_init()
              * dummy communication transaction.
              */
 
-            send_mess (card_index, ALL_POS, (char*) NULL);
+            send_mess (card_index, ALL_POS, NULL);
             recv_mess (card_index, axis_pos, 1);
 
             for (motor_index=0;motor_index<total_axis;motor_index++)

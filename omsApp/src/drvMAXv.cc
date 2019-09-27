@@ -191,14 +191,14 @@ static long report(int);
 static long init();
 static void query_done(int, int, struct mess_node *);
 static int set_status(int, int);
-static RTN_STATUS send_mess(int, char const *, char *);
+static RTN_STATUS send_mess(int, const char *, const char *);
 static int recv_mess(int, char *, int);
 static int getPositions(int card, epicsInt32 *positions, int nPositions);
-static int send_recv_mess(int card, char const * command, char *axis, char *buf, int nMessages);
+static int send_recv_mess(int card, const char * command, const char *axis, char *buf, int nMessages);
 
 extern "C" {
 
-int MAXV_send_mess(int card, char const * command, char *axis) {
+int MAXV_send_mess(int card, const char * command, const char *axis) {
     return (int)send_mess(card, command, axis);
 }
 
@@ -206,7 +206,7 @@ int MAXV_recv_mess(int card, char *buf, int nMessages) {
     return recv_mess(card, buf, nMessages);
 }
 
-int MAXV_send_recv_mess(int card, char const * command, char *axis, char *buf, int nMessages) {
+int MAXV_send_recv_mess(int card, const char * command, const char *axis, char *buf, int nMessages) {
     return send_recv_mess(card, command, axis, buf, nMessages);
 }
 
@@ -255,7 +255,7 @@ struct driver_table MAXv_access =
     query_done,
     NULL,
     &initialized,
-    (char **) MAXv_axis
+    MAXv_axis
 };
 
 struct drvMAXv_drvet
@@ -396,7 +396,7 @@ static int set_status(int card, int signal)
             errlogPrintf(wdctrmsg, card, q_buf);
             status.Bits.RA_PROBLEM = 1;
             motor_info->status.All = status.All;
-            send_mess(card, STOP_ALL, (char*) NULL);
+            send_mess(card, STOP_ALL, NULL);
             /* Disable board. */
             motor_state[card] = (struct controller *) NULL;
             return(rtn_state = 1); /* End move. */
@@ -406,14 +406,14 @@ static int set_status(int card, int signal)
     if (motor_info->encoder_present == YES)
     {
         /* get 4 pieces of info from axis */
-        send_recv_mess(card, "QA", (char *) MAXv_axis[signal], &q_buf[0], 1);
+        send_recv_mess(card, "QA", MAXv_axis[signal], &q_buf[0], 1);
         q_buf[4] = ',';
-        send_recv_mess(card, "EA", (char *) MAXv_axis[signal], &q_buf[5], 1);
+        send_recv_mess(card, "EA", MAXv_axis[signal], &q_buf[5], 1);
     }
     else
     {
         /* get 2 pieces of info from axis */
-        send_recv_mess(card, AXIS_INFO, (char *) MAXv_axis[signal], q_buf, 1);
+        send_recv_mess(card, AXIS_INFO, MAXv_axis[signal], q_buf, 1);
     }
 
     for (index = 0, p = epicsStrtok_r(q_buf, ",", &tok_save); p;
@@ -489,7 +489,7 @@ static int set_status(int card, int signal)
         status.Bits.RA_PROBLEM = 0;
 
     /* get command velocity */
-    send_recv_mess(card, "RV", (char *) MAXv_axis[signal], q_buf, 1);
+    send_recv_mess(card, "RV", MAXv_axis[signal], q_buf, 1);
     motor_info->velocity = atoi(q_buf);
 
     /* Get encoder position */
@@ -606,7 +606,7 @@ errorexit:      errMessage(-1, "Invalid device directive");
 /**************************************************
  * send a message to the OMS board and get the reply
  **************************************************/
-static int send_recv_mess(int card, char const * command, char *axis, char *buf, int nMessages) {
+static int send_recv_mess(int card, const char * command, const char *axis, char *buf, int nMessages) {
     int retval;
 
     if (!epicsMutexTryLock(MUTEX(card))) {
@@ -623,7 +623,7 @@ static int send_recv_mess(int card, char const * command, char *axis, char *buf,
 /* send a message to the OMS board                   */
 /* send_mess()                       */
 /*****************************************************/
-static RTN_STATUS send_mess(int card, char const *com, char *name)
+static RTN_STATUS send_mess(int card, const char *com, const char *name)
 {
     volatile struct MAXv_motor *pmotor;
     epicsInt16 putIndex;
@@ -1261,10 +1261,11 @@ static int motor_init()
         pmotor->status1_irq_enable.All = 0;
         pmotor->status2_irq_enable = 0;
 
-        send_mess(card_index, ERROR_CLEAR, (char*) NULL);
-        send_mess(card_index, STOP_ALL, (char*) NULL);
+        send_mess(card_index, ERROR_CLEAR, NULL);
+        send_mess(card_index, STOP_ALL, NULL);
 
-        rtn_code = send_recv_mess(card_index, GET_IDENT, (char* ) NULL, (char *) pmotorState->ident, 1);
+        rtn_code = send_recv_mess(card_index, GET_IDENT, NULL, (char *) pmotorState->ident, 1);
+
         if (rtn_code != 0)
         {
             errlogPrintf("\n***MAXv card #%d Disabled*** not responding to commands!\n\n", card_index);
@@ -1293,7 +1294,7 @@ static int motor_init()
 
         if (wdtrip == false)
         {
-            send_mess(card_index, initstring[card_index], (char*) NULL);
+            send_mess(card_index, initstring[card_index], NULL);
 
             send_recv_mess(card_index, ALL_POS, (char *) NULL, axis_pos, 1);
 
@@ -1313,7 +1314,7 @@ static int motor_init()
                 STATUS1 flag1;
 
                 /* Test if motor has an encoder. */
-                send_mess(card_index, ENCODER_QUERY, (char *) MAXv_axis[motor_index]);
+                send_mess(card_index, ENCODER_QUERY, MAXv_axis[motor_index]);
                 while (!pmotor->status1_flag.Bits.done) /* Wait for command to complete. */
                     epicsThreadSleep(quantum);
 
@@ -1332,7 +1333,7 @@ static int motor_init()
                 }
                 
                 /* Test if motor has PID parameters. */
-                send_mess(card_index, PID_QUERY, (char *) MAXv_axis[motor_index]);
+                send_mess(card_index, PID_QUERY, MAXv_axis[motor_index]);
                 while (!pmotor->status1_flag.Bits.done) /* Wait for command to complete. */
                     epicsThreadSleep(quantum);
                 if (pmotor->status1_flag.Bits.cmndError)
@@ -1359,9 +1360,9 @@ static int motor_init()
 
                 if (pvtdata->fwver >= 1.30)
                 {
-                    send_recv_mess(card_index, "LM?", (char *) MAXv_axis[motor_index], axis_pos, 1);
+                    send_recv_mess(card_index, "LM?", MAXv_axis[motor_index], axis_pos, 1);
                     if (strcmp(axis_pos, "=f") == 0) /* If limit mode is set to "Off". */
-                        send_mess(card_index, "LMH", (char *) MAXv_axis[motor_index]); /* Set limit mode to "Hard". */
+                        send_mess(card_index, "LMH", MAXv_axis[motor_index]); /* Set limit mode to "Hard". */
                 }
             }
 
@@ -1388,7 +1389,7 @@ static int motor_init()
 
                 set_status(card_index, motor_index);
                 /* Is this needed??? */
-                send_recv_mess(card_index, DONE_QUERY, (char *) MAXv_axis[motor_index], axis_pos, 1);
+                send_recv_mess(card_index, DONE_QUERY, MAXv_axis[motor_index], axis_pos, 1);
             }
 
             Debug(2, "motor_init: Init Address=%p\n", localaddr);
