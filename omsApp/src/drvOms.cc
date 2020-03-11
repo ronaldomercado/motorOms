@@ -1032,11 +1032,7 @@ omsSetup(int num_cards,  /* maximum number of cards in rack */
         oms44_num_cards = num_cards;
 
     /* Check boundary(16byte) on base address */
-#ifdef __LP64__
-    if ((motorUInt64) addrs & 0xF)
-#else
-    if ((epicsUInt32) addrs & 0xF)
-#endif
+    if ((epicsUInt64) addrs & 0xF)
     {
     }
     else
