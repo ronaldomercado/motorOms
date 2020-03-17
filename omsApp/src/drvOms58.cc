@@ -941,11 +941,7 @@ oms58Setup(int num_cards,   /* maximum number of cards in rack */
         oms58_num_cards = num_cards;
 
     /* Check range and boundary(4K) on base address */
-#ifdef __LP64__
-    if (addrs > (void *) 0xF000 || ((motorUInt64) addrs & 0xFFF))
-#else
-    if (addrs > (void *) 0xF000 || ((epicsUInt32) addrs & 0xFFF))
-#endif
+    if (addrs > (void *) 0xF000 || ((epicsUInt64)addrs & 0xFFF))
     {
         char format[] = "%sbase address = %p ***\n";
         oms_addrs = (char *) OMS_NUM_ADDRS;

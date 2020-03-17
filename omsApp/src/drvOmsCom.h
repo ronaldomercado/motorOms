@@ -39,8 +39,11 @@ USAGE... 	This file contains OMS driver "include" information
 
 #include "motordrvCom.h"
 
-#ifdef __LP64__
-typedef long long motorUInt64;
+#if LT_EPICSBASE(3,15,0,2)
+  #if __STDC_VERSION__ < 199901L
+    typedef long long          epicsInt64;
+    typedef unsigned long long epicsUInt64;
+  #endif
 #endif
 
 /* Default profile. */
