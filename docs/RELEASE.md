@@ -1,5 +1,23 @@
 # motorOms Releases
 
+## __R1-1 (2020-05-12)__
+R1-1 is a release based on the master branch.  
+
+### Changes since R1-0
+
+#### New features
+* Commit [295cadb](https://github.com/epics-motor/motorOms/commit/295cadb68ad20346fb3086d9d66b517ed415fe0b): User displays can now be autoconverted at build time
+
+#### Modifications to existing features
+* Commit [671b0ac](https://github.com/epics-motor/motorOms/commit/671b0acf3632c94dd85d4cdad3d48adbdbb746a5): ``CONFIG_SITE`` now includes ``$(SUPPORT)/configure/CONFIG_SITE``, if it exists
+* Commit [bef5c87](https://github.com/epics-motor/motorOms/commit/bef5c872c3f524e87d8e8c6f75b5ee1e11ffc5f7): ``SUPPORT`` is now defined in ``RELEASE``, which is needed for autoconvert
+* Commit [c583f11](https://github.com/epics-motor/motorOms/commit/c583f112815114449d4b1993efb9056dc09d23e8): User displays have been autoconverted using the latest converter
+
+#### Bug fixes
+* Pull request [#3](https://github.com/epics-motor/motorOms/pull/3): Fix cast from ``void*`` to ``epicsUInt32`` loses precision
+* Commit [53030c9](https://github.com/epics-motor/motorOms/commit/53030c9fce285196d1d7aac75b61682f597a3a09): Include ``$(MOTOR)/modules/RELEASE.$(EPICS_HOST_ARCH).local`` instead of ``$(MOTOR)/configure/RELEASE``
+* Pull request [#2](https://github.com/epics-motor/motorOms/pull/2): Eliminated compiler warnings
+
 ## __R1-0 (2019-04-18)__
 R1-0 is a release based on the master branch.  
 
