@@ -609,9 +609,9 @@ errorexit:      errMessage(-1, "Invalid device directive");
 static int send_recv_mess(int card, const char * command, const char *axis, char *buf, int nMessages) {
     int retval;
 
-    if (!epicsMutexTryLock(MUTEX(card))) {
+    if (epicsMutexTryLock(MUTEX(card)) != epicsMutexLockOK) {
         Debug(1, "send_recv_mess: waiting for mutex\n");
-        epicsMutexLock(MUTEX(card));
+        epicsMutexMustLock(MUTEX(card));
     }
     retval = (int)send_mess(card, command, axis);
     retval |= recv_mess(card, buf, nMessages);
@@ -647,9 +647,9 @@ static RTN_STATUS send_mess(int card, const char *com, const char *name)
     pmotor = (struct MAXv_motor *) motor_state[card]->localaddr;
     Debug(9, "send_mess: pmotor = %p\n", pmotor);
 
-    if (!epicsMutexTryLock(MUTEX(card))) {
+    if (epicsMutexTryLock(MUTEX(card)) != epicsMutexLockOK) {
         Debug(1, "send_mess: waiting for mutex\n");
-        epicsMutexLock(MUTEX(card));
+        epicsMutexMustLock(MUTEX(card));
     }
 
     return_code = OK;
@@ -759,9 +759,9 @@ static int recv_mess(int card, char *com, int amount)
 
     pmotor = (struct MAXv_motor *) motor_state[card]->localaddr;
 
-    if (!epicsMutexTryLock(MUTEX(card))) {
+    if (epicsMutexTryLock(MUTEX(card)) != epicsMutexLockOK) {
         Debug(1, "recv_mess: waiting for mutex\n");
-        epicsMutexLock(MUTEX(card));
+        epicsMutexMustLock(MUTEX(card));
     }
 
     if (amount == -1)
