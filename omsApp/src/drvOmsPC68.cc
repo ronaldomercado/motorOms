@@ -147,7 +147,7 @@ struct driver_table OmsPC68_access =
     oms_axis
 };
 
-struct
+struct drvOmsPC68_drvet
 {
     long number;
     long (*report) (int);
