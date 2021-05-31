@@ -173,7 +173,6 @@ static int omsGet(int card, char *pcom, bool timeout);
 static RTN_STATUS omsPut(int card, char *pcom);
 static int omsError(int card);
 static int motorIsrEnable(int card);
-static void motorIsrDisable(int card);
 
 struct driver_table oms_access =
 {
@@ -969,37 +968,6 @@ static int motorIsrEnable(int card)
     pmotor->control = (IRQ_ENABLE_ALL | IRQ_RESET_ID);
     return(OK);
 }
-
-static void motorIsrDisable(int card)
-{
-    volatile struct controller *pmotorState;
-    volatile struct vmex_motor *pmotor;
-    struct irqdatastr *irqdata;
-    long status;
-
-    Debug(5, "motorIsrDisable: Entry card#%d\n", card);
-
-    pmotorState = motor_state[card];
-    irqdata = (struct irqdatastr *) pmotorState->DevicePrivate;
-    pmotor = (struct vmex_motor *) (pmotorState->localaddr);
-
-    /* Disable interrupts */
-    pmotor->control = IRQ_RESET_ID;
-
-    status = pdevLibVirtualOS->pDevDisconnectInterruptVME(omsInterruptVector + card, (void (*)(void *)) motorIsr);
-
-    if (!RTN_SUCCESS(status))
-        errPrintf(status, __FILE__, __LINE__, "Can't disconnect vector %d\n",
-                  omsInterruptVector + card);
-
-    /* Remove interrupt control functions */
-    irqdata->irqEnable = FALSE;
-    irqdata->irqErrno = 0;
-    epicsRingBytesDelete(irqdata->recv_rng);
-    epicsRingBytesDelete(irqdata->send_rng);
-    delete irqdata->recv_sem;
-}
-
 
 /*****************************************************/
 /* Configuration function for  module_types data     */
