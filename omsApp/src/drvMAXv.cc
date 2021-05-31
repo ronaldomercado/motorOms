@@ -126,11 +126,6 @@ USAGE...        Motor record driver level support for OMS model MAXv.
 /* Define for return test on devNoResponseProbe() */
 #define PROBE_SUCCESS(STATUS) ((STATUS)==S_dev_addressOverlap)
 
-/* Are we using VME-Bus/devLib */
-#if (defined(vxWorks) || defined(__rtems__))
-    #define USE_DEVLIB
-#endif
-
 /* jps: INFO messages - add RV and move QA to top */
 #define AXIS_INFO       "QA"
 #define ENCODER_QUERY   "EA ID"
@@ -1103,15 +1098,11 @@ static int motorIsrSetup(int card)
 {
     volatile struct MAXv_motor *pmotor;
     STATUS1 status1_irq;
-#ifdef USE_DEVLIB
     long status;
-#endif
 
     Debug(5, "motorIsrSetup: Entry card#%d\n", card);
 
     pmotor = (struct MAXv_motor *) (motor_state[card]->localaddr);
-
-#ifdef USE_DEVLIB
 
     status = pdevLibVirtualOS->pDevConnectInterruptVME(
         MAXvInterruptVector + card,
@@ -1135,8 +1126,6 @@ static int motorIsrSetup(int card)
         errPrintf(status, __FILE__, __LINE__, "Can't enable enterrupt level %d\n", omsInterruptLevel);
         return (ERROR);
     }
-
-#endif
 
     /* Setup card for interrupt-on-done */
     status1_irq.All = 0;
@@ -1201,13 +1190,11 @@ static int motor_init()
 
         Debug(9, "motor_init: devNoResponseProbe() on addr %p\n", probeAddr);
         /* Scan memory space to assure card id */
-#ifdef USE_DEVLIB
         do
         {
             status = devNoResponseProbe(MAXv_ADDRS_TYPE, (unsigned int) startAddr, 2);
             startAddr += (MAXv_brd_size / 10);
         } while (PROBE_SUCCESS(status) && startAddr < endAddr);
-#endif
         if (!PROBE_SUCCESS(status))
         {
             Debug(3, "motor_init: Card NOT found!\n");
@@ -1215,7 +1202,6 @@ static int motor_init()
             goto loopend;
         }
 
-#ifdef USE_DEVLIB
         status = devRegisterAddress(__FILE__, MAXv_ADDRS_TYPE,
                                     (size_t) probeAddr, MAXv_brd_size,
                                     (volatile void **) &localaddr);
@@ -1227,7 +1213,6 @@ static int motor_init()
             motor_state[card_index] = (struct controller *) NULL;
             goto loopend;
         }
-#endif
 
         Debug(9, "motor_init: localaddr = %p\n", localaddr);
         pmotor = (struct MAXv_motor *) localaddr;

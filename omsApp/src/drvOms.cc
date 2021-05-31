@@ -917,7 +917,6 @@ static int motorIsrEnable(int card)
     irqdata = (struct irqdatastr *) pmotorState->DevicePrivate;
     pmotor = (struct vmex_motor *) (pmotorState->localaddr);
 
-#ifdef vxWorks
     {
         long status;
         status = pdevLibVirtualOS->pDevConnectInterruptVME(
@@ -951,7 +950,6 @@ static int motorIsrEnable(int card)
             return(ERROR);
         }
     }
-#endif
 
     /* Setup card for interrupt-on-done */
     pmotor->vector = omsInterruptVector + card;
@@ -988,9 +986,7 @@ static void motorIsrDisable(int card)
     /* Disable interrupts */
     pmotor->control = IRQ_RESET_ID;
 
-#ifdef vxWorks
     status = pdevLibVirtualOS->pDevDisconnectInterruptVME(omsInterruptVector + card, (void (*)(void *)) motorIsr);
-#endif
 
     if (!RTN_SUCCESS(status))
         errPrintf(status, __FILE__, __LINE__, "Can't disconnect vector %d\n",
@@ -1126,18 +1122,15 @@ static int motor_init()
 
         Debug(9, "motor_init: devNoResponseProbe() on addr %p\n", probeAddr);
         /* Scan memory space to assure card id */
-#ifdef vxWorks
         do
         {
             status = devNoResponseProbe(OMS_ADDRS_TYPE, (unsigned int) startAddr, 1);
             startAddr += 0x2;
         } while (PROBE_SUCCESS(status) && startAddr < endAddr);
-#endif
         if (PROBE_SUCCESS(status))
         {
             struct irqdatastr *irqdata;
 
-#ifdef vxWorks
             status = devRegisterAddress(__FILE__, OMS_ADDRS_TYPE,
                                         (size_t) probeAddr, OMS_BRD_SIZE,
                                         (volatile void **) &localaddr);
@@ -1149,7 +1142,6 @@ static int motor_init()
                           "Can't register address 0x%x\n", (unsigned) probeAddr);
                 return(ERROR);
             }
-#endif
             Debug(9, "motor_init: localaddr = %p\n", localaddr);
             pmotor = (struct vmex_motor *) localaddr;
 

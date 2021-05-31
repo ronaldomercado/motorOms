@@ -1056,7 +1056,6 @@ static void motorIsr(int card)
 
 static int motorIsrSetup(int card)
 {
-#ifdef vxWorks
     volatile struct vmex_motor *pmotor;
     long status;
     CNTRL_REG cntrlBuf;
@@ -1102,7 +1101,6 @@ static int motorIsrSetup(int card)
     cntrlBuf.Bits.intReqEna = 1;
 
     pmotor->control.cntrlReg = cntrlBuf.All;
-#endif
     return(OK);
 }
 
@@ -1158,16 +1156,13 @@ static int motor_init()
 
         Debug(9, "motor_init: devNoResponseProbe() on addr %p\n", probeAddr);
         /* Scan memory space to assure card id */
-#ifdef vxWorks
         do
         {
             status = devNoResponseProbe(OMS_ADDRS_TYPE, (unsigned int) startAddr, 2);
             startAddr += 0x100;
         } while (PROBE_SUCCESS(status) && startAddr < endAddr);
-#endif
         if (PROBE_SUCCESS(status))
         {
-#ifdef vxWorks
             status = devRegisterAddress(__FILE__, OMS_ADDRS_TYPE,
                                         (size_t) probeAddr, OMS_BRD_SIZE,
                                         (volatile void **) &localaddr);
@@ -1178,7 +1173,6 @@ static int motor_init()
                           (unsigned int) probeAddr);
                 return(ERROR);
             }
-#endif
             Debug(9, "motor_init: localaddr = %p\n", localaddr);
             pmotor = (struct vmex_motor *) localaddr;
 
