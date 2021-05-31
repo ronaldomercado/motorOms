@@ -158,7 +158,7 @@ int MAXv_num_cards = 0;
 #include        "motordrvComCode.h"
 
 /* --- Local data common to all OMS drivers. --- */
-static char *MAXv_addrs = 0x0;
+static unsigned int MAXv_addrs = 0x0;
 static epicsAddressType MAXv_ADDRS_TYPE;
 static volatile unsigned MAXvInterruptVector = 0;
 static volatile epicsUInt8 omsInterruptLevel = OMS_INT_LEVEL;
@@ -930,7 +930,7 @@ MAXvSetup(int num_cards,        /* maximum number of cards in rack */
             }
             else
             {
-                MAXv_addrs = (char *) addrs;
+                MAXv_addrs = addrs;
                 MAXv_brd_size = 0x1000;
             }
             break;
@@ -943,7 +943,7 @@ MAXvSetup(int num_cards,        /* maximum number of cards in rack */
             }
             else
             {
-                MAXv_addrs = (char *) addrs;
+                MAXv_addrs = addrs;
                 MAXv_brd_size = 0x10000;
             }
             break;
@@ -956,7 +956,7 @@ MAXvSetup(int num_cards,        /* maximum number of cards in rack */
             }
             else
             {
-                MAXv_addrs = (char *) addrs;
+                MAXv_addrs = addrs;
                 MAXv_brd_size = 0x1000000;
             }
             break;
@@ -1153,7 +1153,7 @@ static int motor_init()
     char *tok_save, *pos_ptr;
     int total_encoders = 0, total_axis = 0, total_pidcnt = 0;
     volatile void *localaddr=0;
-    void *probeAddr;
+    unsigned int probeAddr;
 
     tok_save = NULL;
 
@@ -1177,22 +1177,22 @@ static int motor_init()
 
     for (card_index = 0; card_index < MAXv_num_cards; card_index++)
     {
-        epicsInt8 *startAddr;
-        epicsInt8 *endAddr;
+        unsigned int startAddr;
+        unsigned int endAddr;
         bool wdtrip;
         int rtn_code;
 
         Debug(2, "motor_init: card %d\n", card_index);
 
         probeAddr = MAXv_addrs + (card_index * MAXv_brd_size);
-        startAddr = (epicsInt8 *) probeAddr;
+        startAddr = probeAddr;
         endAddr = startAddr + MAXv_brd_size;
 
-        Debug(9, "motor_init: devNoResponseProbe() on addr %p\n", probeAddr);
+        Debug(9, "motor_init: devNoResponseProbe() on addr %#x\n", probeAddr);
         /* Scan memory space to assure card id */
         do
         {
-            status = devNoResponseProbe(MAXv_ADDRS_TYPE, (unsigned int) startAddr, 2);
+            status = devNoResponseProbe(MAXv_ADDRS_TYPE, startAddr, 2);
             startAddr += (MAXv_brd_size / 10);
         } while (PROBE_SUCCESS(status) && startAddr < endAddr);
         if (!PROBE_SUCCESS(status))
@@ -1203,13 +1203,13 @@ static int motor_init()
         }
 
         status = devRegisterAddress(__FILE__, MAXv_ADDRS_TYPE,
-                                    (size_t) probeAddr, MAXv_brd_size,
-                                    (volatile void **) &localaddr);
-        Debug(9, "motor_init: devRegisterAddress() status = %d\n", (int) status);
+                                    probeAddr, MAXv_brd_size,
+                                    &localaddr);
+        Debug(9, "motor_init: devRegisterAddress() status = %ld\n", status);
         if (!RTN_SUCCESS(status))
         {
-            errPrintf(status, __FILE__, __LINE__, "Can't register address 0x%x\n",
-                      (unsigned int) probeAddr);
+            errPrintf(status, __FILE__, __LINE__, "Can't register address %#x\n",
+                      probeAddr);
             motor_state[card_index] = (struct controller *) NULL;
             goto loopend;
         }

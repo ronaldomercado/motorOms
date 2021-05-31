@@ -149,7 +149,7 @@ int oms44_num_cards = 0;
 
 
 /* --- Local data common to all OMS drivers. --- */
-static char *oms_addrs = 0x0;
+static unsigned int oms_addrs = 0x0;
 static volatile unsigned omsInterruptVector = 0;
 static volatile epicsUInt8 omsInterruptLevel = OMS_INT_LEVEL;
 static volatile int motionTO = 10;
@@ -1007,7 +1007,7 @@ static void motorIsrDisable(int card)
 /*****************************************************/
 RTN_STATUS
 omsSetup(int num_cards,  /* maximum number of cards in rack */
-         void *addrs,    /* Base Address(see README for details) */
+         unsigned addrs, /* Base Address(see README for details) */
          unsigned vector,/* noninterrupting(0), valid vectors(64-255) */
          int int_level,  /* interrupt level (1-6) */
          int scan_rate)  /* polling rate - 1-60 Hz */
@@ -1028,11 +1028,11 @@ omsSetup(int num_cards,  /* maximum number of cards in rack */
         oms44_num_cards = num_cards;
 
     /* Check boundary(16byte) on base address */
-    if ((epicsUInt64) addrs & 0xF)
+    if (addrs & 0xF)
     {
     }
     else
-        oms_addrs = (char *) addrs;
+        oms_addrs = addrs;
 
     omsInterruptVector = vector;
     if (vector < 64 || vector > 255)
@@ -1086,7 +1086,7 @@ static int motor_init()
     char *tok_save, *pos_ptr;
     int total_encoders = 0, total_axis = 0;
     volatile void *localaddr;
-    void *probeAddr;
+    unsigned int probeAddr;
 
     tok_save = NULL;
     quantum = epicsThreadSleepQuantum();
@@ -1111,20 +1111,20 @@ static int motor_init()
 
     for (card_index = 0; card_index < oms44_num_cards; card_index++)
     {
-        epicsInt8 *startAddr;
-        epicsInt8 *endAddr;
+        unsigned int startAddr;
+        unsigned int endAddr;
 
         Debug(2, "motor_init: card %d\n", card_index);
 
         probeAddr = oms_addrs + (card_index * OMS_BRD_SIZE);
-        startAddr = (epicsInt8 *) probeAddr + 1;
+        startAddr = probeAddr + 1;
         endAddr = startAddr + OMS_BRD_SIZE;
 
-        Debug(9, "motor_init: devNoResponseProbe() on addr %p\n", probeAddr);
+        Debug(9, "motor_init: devNoResponseProbe() on addr %#x\n", probeAddr);
         /* Scan memory space to assure card id */
         do
         {
-            status = devNoResponseProbe(OMS_ADDRS_TYPE, (unsigned int) startAddr, 1);
+            status = devNoResponseProbe(OMS_ADDRS_TYPE, startAddr, 1);
             startAddr += 0x2;
         } while (PROBE_SUCCESS(status) && startAddr < endAddr);
         if (PROBE_SUCCESS(status))
@@ -1132,14 +1132,14 @@ static int motor_init()
             struct irqdatastr *irqdata;
 
             status = devRegisterAddress(__FILE__, OMS_ADDRS_TYPE,
-                                        (size_t) probeAddr, OMS_BRD_SIZE,
-                                        (volatile void **) &localaddr);
-            Debug(9, "motor_init: devRegisterAddress() status = %d\n",
-                  (int) status);
+                                        probeAddr, OMS_BRD_SIZE,
+                                        &localaddr);
+            Debug(9, "motor_init: devRegisterAddress() status = %ld\n",
+                  status);
             if (!RTN_SUCCESS(status))
             {
                 errPrintf(status, __FILE__, __LINE__,
-                          "Can't register address 0x%x\n", (unsigned) probeAddr);
+                          "Can't register address %#x\n", probeAddr);
                 return(ERROR);
             }
             Debug(9, "motor_init: localaddr = %p\n", localaddr);
