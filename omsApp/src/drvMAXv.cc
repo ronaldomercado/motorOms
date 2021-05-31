@@ -385,7 +385,7 @@ static int set_status(int card, int signal)
     MAXvCntrl = (struct MAXvController *) brdptr->DevicePrivate;
     if (MAXvCntrl->fwver >= 1.33)
     {
-        send_recv_mess(card, "#WS", (char *) NULL, q_buf, 1);
+        send_recv_mess(card, "#WS", NULL, q_buf, 1);
         if (strcmp(q_buf, "=0") != 0)
         {
             errlogPrintf(wdctrmsg, card, q_buf);
@@ -393,7 +393,7 @@ static int set_status(int card, int signal)
             motor_info->status.All = status.All;
             send_mess(card, STOP_ALL, NULL);
             /* Disable board. */
-            motor_state[card] = (struct controller *) NULL;
+            motor_state[card] = NULL;
             return(rtn_state = 1); /* End move. */
         }
     }
@@ -1198,7 +1198,7 @@ static int motor_init()
         if (!PROBE_SUCCESS(status))
         {
             Debug(3, "motor_init: Card NOT found!\n");
-            motor_state[card_index] = (struct controller *) NULL;
+            motor_state[card_index] = NULL;
             goto loopend;
         }
 
@@ -1210,7 +1210,7 @@ static int motor_init()
         {
             errPrintf(status, __FILE__, __LINE__, "Can't register address %#x\n",
                       probeAddr);
-            motor_state[card_index] = (struct controller *) NULL;
+            motor_state[card_index] = NULL;
             goto loopend;
         }
 
@@ -1220,7 +1220,7 @@ static int motor_init()
         if (pmotor->firmware_status.Bits.running == 0)
         {
             errlogPrintf(norunmsg, card_index, (unsigned int) pmotor->firmware_status.All);
-            motor_state[card_index] = (struct controller *) NULL;
+            motor_state[card_index] = NULL;
             goto loopend;
         }
 
@@ -1254,7 +1254,7 @@ static int motor_init()
         if (rtn_code != 0)
         {
             errlogPrintf("\n***MAXv card #%d Disabled*** not responding to commands!\n\n", card_index);
-            motor_state[card_index] = (struct controller *) NULL;
+            motor_state[card_index] = NULL;
             goto loopend;
         }
         Debug(3, "Identification = %s\n", pmotorState->ident);
@@ -1267,12 +1267,12 @@ static int motor_init()
 
         if (pvtdata->fwver >= 1.33)
         {
-            send_recv_mess(card_index, "#WS", (char *) NULL, axis_pos, 1);
+            send_recv_mess(card_index, "#WS", NULL, axis_pos, 1);
             if (strcmp(axis_pos, "=0") != 0)
             {
                 errlogPrintf(wdctrmsg, card_index, axis_pos);
                 epicsThreadSleep(2.0);
-                motor_state[card_index] = (struct controller *) NULL;
+                motor_state[card_index] = NULL;
                 wdtrip = true;
             }
         }
@@ -1281,7 +1281,7 @@ static int motor_init()
         {
             send_mess(card_index, initstring[card_index], NULL);
 
-            send_recv_mess(card_index, ALL_POS, (char *) NULL, axis_pos, 1);
+            send_recv_mess(card_index, ALL_POS, NULL, axis_pos, 1);
 
             for (total_axis = 0, pos_ptr = epicsStrtok_r(axis_pos, ",", &tok_save);
                  pos_ptr; pos_ptr = epicsStrtok_r(NULL, ",", &tok_save), total_axis++)
@@ -1386,11 +1386,11 @@ loopend:;
 
     any_motor_in_motion = 0;
 
-    mess_queue.head = (struct mess_node *) NULL;
-    mess_queue.tail = (struct mess_node *) NULL;
+    mess_queue.head = NULL;
+    mess_queue.tail = NULL;
 
-    free_list.head = (struct mess_node *) NULL;
-    free_list.tail = (struct mess_node *) NULL;
+    free_list.head = NULL;
+    free_list.tail = NULL;
 
     Debug(3, "Motors initialized\n");
 

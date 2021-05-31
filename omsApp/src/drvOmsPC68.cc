@@ -841,16 +841,16 @@ static int motor_init()
             }
         }
         else
-            motor_state[card_index] = (struct controller *) NULL;
+            motor_state[card_index] = NULL;
     }
 
     any_motor_in_motion = 0;
 
-    mess_queue.head = (struct mess_node *) NULL;
-    mess_queue.tail = (struct mess_node *) NULL;
+    mess_queue.head = NULL;
+    mess_queue.tail = NULL;
 
-    free_list.head = (struct mess_node *) NULL;
-    free_list.tail = (struct mess_node *) NULL;
+    free_list.head = NULL;
+    free_list.tail = NULL;
 
     Debug(3, "Motors initialized\n");
     epicsThreadCreate((char *) "OmsPC68_motor", epicsThreadPriorityMedium,
@@ -891,7 +891,7 @@ RTN_STATUS OmsPC68Setup (int num_cards, int scan_rate)
                   malloc(OmsPC68_num_cards * sizeof(struct controller *));
 
     for (itera = 0; itera < OmsPC68_num_cards; itera++)
-        motor_state[itera] = (struct controller *) NULL;
+        motor_state[itera] = NULL;
 
     return(OK);
 }
