@@ -853,7 +853,7 @@ static int motor_init()
     free_list.tail = NULL;
 
     Debug(3, "Motors initialized\n");
-    epicsThreadCreate((char *) "OmsPC68_motor", epicsThreadPriorityMedium,
+    epicsThreadCreate("OmsPC68_motor", epicsThreadPriorityMedium,
                       epicsThreadGetStackSize(epicsThreadStackMedium),
                       (EPICSTHREADFUNC) motor_task, (void *) &targs);
     Debug(3, "Started motor_task\n");

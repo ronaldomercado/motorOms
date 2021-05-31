@@ -1318,7 +1318,7 @@ static int motor_init()
     }
 #endif
 
-    epicsThreadCreate((char *) "Oms58_motor", epicsThreadPriorityMedium,
+    epicsThreadCreate("Oms58_motor", epicsThreadPriorityMedium,
                       epicsThreadGetStackSize(epicsThreadStackMedium),
                       (EPICSTHREADFUNC) motor_task, (void *) &targs);
 

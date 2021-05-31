@@ -1237,7 +1237,7 @@ static int motor_init()
 
     Debug(3, "Motors initialized\n");
 
-    epicsThreadCreate((const char *) "Oms_motor", epicsThreadPriorityMedium,
+    epicsThreadCreate("Oms_motor", epicsThreadPriorityMedium,
                       epicsThreadGetStackSize(epicsThreadStackMedium),
                       (EPICSTHREADFUNC) motor_task, (void *) &targs);
 

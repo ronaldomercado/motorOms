@@ -304,10 +304,10 @@ static void query_done(int card, int axis, struct mess_node *nodeptr)
 {
     char buffer[MAX_IDENT_LEN];
 
-    send_recv_mess(card, DONE_QUERY, (char *) MAXv_axis[axis], buffer, 1);
+    send_recv_mess(card, DONE_QUERY, MAXv_axis[axis], buffer, 1);
 
     if (nodeptr->status.Bits.RA_PROBLEM)
-        send_mess(card, AXIS_STOP, (char *) MAXv_axis[axis]);
+        send_mess(card, AXIS_STOP, MAXv_axis[axis]);
 }
 
 
@@ -470,7 +470,7 @@ static int set_status(int card, int signal)
     if (motor_info->no_motion_count > motionTO)
     {
         status.Bits.RA_PROBLEM = 1;
-        send_mess(card, AXIS_STOP, (char *) MAXv_axis[signal]);
+        send_mess(card, AXIS_STOP, MAXv_axis[signal]);
         motor_info->no_motion_count = 0;
         errlogSevPrintf(errlogMinor, "Motor motion timeout ERROR on card: %d, signal: %d\n",
             card, signal);
@@ -577,7 +577,7 @@ errorexit:      errMessage(-1, "Invalid device directive");
             strcpy(buffer, nodeptr->postmsgptr);
 
         strcpy(outbuf, buffer);
-        send_mess(card, outbuf, (char *) MAXv_axis[signal]);
+        send_mess(card, outbuf, MAXv_axis[signal]);
         nodeptr->postmsgptr = NULL;
     }
 
@@ -1394,7 +1394,7 @@ loopend:;
 
     Debug(3, "Motors initialized\n");
 
-    epicsThreadCreate((char *) "MAXv_motor", epicsThreadPriorityMedium,
+    epicsThreadCreate("MAXv_motor", epicsThreadPriorityMedium,
                       epicsThreadGetStackSize(epicsThreadStackMedium),
                       (EPICSTHREADFUNC) motor_task, (void *) &targs);
 
