@@ -542,7 +542,7 @@ static int set_status(int card, int signal)
 
                 /* Copy device directive to buffer. */
                 strncpy(buffer, nodeptr->postmsgptr, size);
-                buffer[size] = (char) NULL;
+                buffer[size] = 0;
 
                 if (strncmp(buffer, "@PUT(", 5) != 0)
                     goto errorexit;
@@ -774,7 +774,7 @@ static int recv_mess(int card, char *com, int amount)
     }
 
     bufptr = com;
-    *bufptr = (char) NULL;
+    *bufptr = 0;
 
     do
     {
@@ -861,7 +861,7 @@ static char *readbuf(volatile struct MAXv_motor *pmotor, char *bufptr)
         getIndex -= BUFFER_SIZE;
     
     bufptr += (bufsize - 1);
-    *bufptr = (char) NULL;
+    *bufptr = 0;
 
     while (getIndex != pmotor->inPutIndex)
     {
@@ -1016,7 +1016,7 @@ MAXvSetup(int num_cards,        /* maximum number of cards in rack */
     for (itera = 0, strptr = &initstring[0]; itera < MAXv_num_cards; itera++, strptr++)
     {
         *strptr = (char *) malloc(INITSTR_SIZE);
-        **strptr = (char) NULL;
+        **strptr = 0;
     }
 
     return(rtncode);
