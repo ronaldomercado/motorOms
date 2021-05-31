@@ -1070,7 +1070,7 @@ static int motorIsrSetup(int card)
 #else
         (void (*)(void *)) motorIsr,
 #endif
-        (void *) card);
+        (void *)(size_t) card);
 
     if (!RTN_SUCCESS(status))
     {
