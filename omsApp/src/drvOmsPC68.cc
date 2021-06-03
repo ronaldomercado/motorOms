@@ -147,7 +147,7 @@ struct driver_table OmsPC68_access =
     oms_axis
 };
 
-struct
+struct drvOmsPC68_drvet
 {
     long number;
     long (*report) (int);
@@ -685,10 +685,12 @@ static void asynCallback(void *drvPvt,asynUser *pasynUser,char *data,size_t len,
     stat = (d & 0x0000FF00) >> 8;
 
     if( stat & STAT_DONE )
+    {
         if( stat & STAT_ERROR_MSK )
             ++pcntrl->errcnt;
         else
             motor_sem.signal();
+    }
 
 //printf("drvOmsPC68:asynCallback - card %2.2d, error %d, status 0x%8.8X\n",pcntrl->card,pcntrl->errcnt,d);
 
@@ -841,19 +843,19 @@ static int motor_init()
             }
         }
         else
-            motor_state[card_index] = (struct controller *) NULL;
+            motor_state[card_index] = NULL;
     }
 
     any_motor_in_motion = 0;
 
-    mess_queue.head = (struct mess_node *) NULL;
-    mess_queue.tail = (struct mess_node *) NULL;
+    mess_queue.head = NULL;
+    mess_queue.tail = NULL;
 
-    free_list.head = (struct mess_node *) NULL;
-    free_list.tail = (struct mess_node *) NULL;
+    free_list.head = NULL;
+    free_list.tail = NULL;
 
     Debug(3, "Motors initialized\n");
-    epicsThreadCreate((char *) "OmsPC68_motor", epicsThreadPriorityMedium,
+    epicsThreadCreate("OmsPC68_motor", epicsThreadPriorityMedium,
                       epicsThreadGetStackSize(epicsThreadStackMedium),
                       (EPICSTHREADFUNC) motor_task, (void *) &targs);
     Debug(3, "Started motor_task\n");
@@ -891,7 +893,7 @@ RTN_STATUS OmsPC68Setup (int num_cards, int scan_rate)
                   malloc(OmsPC68_num_cards * sizeof(struct controller *));
 
     for (itera = 0; itera < OmsPC68_num_cards; itera++)
-        motor_state[itera] = (struct controller *) NULL;
+        motor_state[itera] = NULL;
 
     return(OK);
 }
