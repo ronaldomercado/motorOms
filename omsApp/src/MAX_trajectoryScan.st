@@ -121,7 +121,6 @@ int i;
 int j;
 int k;
 int n;
-double delay;
 int anyMoving;
 int ncomplete;
 int nextra;
