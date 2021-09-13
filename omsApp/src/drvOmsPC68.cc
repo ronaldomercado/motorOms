@@ -659,11 +659,11 @@ static int omsGet(int card, char *pchar)
     size_t      nread;
     asynStatus  status;
     struct OmsPC68controller *cntrl;
-    
+
     cntrl = (struct OmsPC68controller *) motor_state[card]->DevicePrivate;
     status = cntrl->pasynOctet->read(cntrl->octetPvt,cntrl->pasynUser,pchar,1,&nread,&eomReason);
 
-    return(nread);
+    return(status == asynSuccess ? nread : 0);
 }
 
 static void asynCallback(void *drvPvt,asynUser *pasynUser,char *data,size_t len, int eomReason)
