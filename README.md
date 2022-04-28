@@ -2,7 +2,8 @@
 EPICS motor drivers for the following [OMS](https://www.omsinmotion.com/) controllers:<br>
 VME8/44/58, VS4, VX2, PC68/78, MAXv
 
-[![Build Status](https://travis-ci.org/epics-motor/motorOms.png)](https://travis-ci.org/epics-motor/motorOms)
+[![Build Status](https://github.com/epics-motor/motorOms/actions/workflows/ci-scripts-build.yml/badge.svg)](https://github.com/epics-motor/motorOms/actions/workflows/ci-scripts-build.yml)
+<!--[![Build Status](https://travis-ci.org/epics-motor/motorOms.png)](https://travis-ci.org/epics-motor/motorOms)-->
 
 motorOms is a submodule of [motor](https://github.com/epics-modules/motor).  When motorOms is built in the ``motor/modules`` directory, no manual configuration is needed.
 
