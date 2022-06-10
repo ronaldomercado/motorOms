@@ -5,5 +5,3 @@
 # Use motorOms's RELEASE.local when building outside motor
 -include $(TOP)/configure/RELEASE.local
 
-SUPPORT=$(MOTOR)/..
-
