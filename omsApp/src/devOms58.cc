@@ -51,6 +51,7 @@ USAGE...	Motor record device level support for OMS VME58.
 #include	<recSup.h>
 #include	<errlog.h>
 
+#include    <shareLib.h>
 #include	"motorRecord.h"
 #include	"motor.h"
 #include	"drvOms58.h"

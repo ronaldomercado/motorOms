@@ -80,6 +80,7 @@ USAGE...        Data and functions common to all OMS device level support.
 #include <dbAccess.h>
 #include <stdlib.h>
 
+#include <shareLib.h>
 #include "motorRecord.h"
 #include "motor.h"
 #include "motordevCom.h"

@@ -114,6 +114,7 @@ USAGE...        Motor record driver level support for OMS model MAXv.
 #include <cantProceed.h>
 #include <errlog.h>
 
+#include <shareLib.h>
 #include "motorRecord.h" /* For Driver Power Monitor feature only. */
 #include "motor.h"
 #include "motordevCom.h" /* For Driver Power Monitor feature only. */

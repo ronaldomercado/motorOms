@@ -37,6 +37,7 @@ USAGE... Device level support for OMS MAXv model.
 
 #include <errlog.h>
 
+#include <shareLib.h>
 #include "motorRecord.h"
 #include "devOmsCom.h"
 #include "epicsExport.h"

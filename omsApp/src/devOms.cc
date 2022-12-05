@@ -52,6 +52,7 @@ USAGE... Device level support for OMS VME8 and VME44 models.
 #include	<recSup.h>
 #include	<errlog.h>
 
+#include    <shareLib.h>
 #include	"motorRecord.h"
 #include	"motor.h"
 #include	"drvOms.h"

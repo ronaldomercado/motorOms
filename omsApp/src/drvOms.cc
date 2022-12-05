@@ -113,6 +113,7 @@ USAGE...        Driver level support for OMS models VME8, VME44, VS4 and VX2.
 #include        <errlog.h>
 #include        <stdlib.h>
 
+#include        <shareLib.h>
 #include        "motor.h"
 #include        "drvOms.h"
 #include        "epicsExport.h"
