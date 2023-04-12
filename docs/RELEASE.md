@@ -1,5 +1,24 @@
 # motorOms Releases
 
+## __R1-2 (2023-04-12)__
+R1-2 is a release based on the master branch.
+
+### Changes since R1-1
+
+#### New features
+* Pull request [#8](https://github.com/epics-motor/motorOms/pull/8): [Dirk Zimoch](https://github.com/dirk-zimoch) enabled non-VxWorks IOCs
+
+#### Modifications to existing features
+* Commit [db0a1c3](https://github.com/epics-motor/motorOms/commit/db0a1c31cb67c579b8110cfc13c2d83bf63371da): SUPPORT has been removed from the RELEASE file; use RELEASE.local to define it instead.
+
+#### Bug fixes
+* Pull request [#7](https://github.com/epics-motor/motorOms/pull/7): [Heinz Junkes](https://github.com/hjunkes) fixed an epicsMutexTryLock bug, best explained by [Andrew Johnson](https://github.com/anjohnson) in [this comment](https://github.com/epics-modules/motor/issues/172#issuecomment-758139901)
+* Pull request [#9](https://github.com/epics-motor/motorOms/pull/9): [Dirk Zimoch](https://github.com/dirk-zimoch) fixed compiler warnings about unused variables
+
+#### Continuous integration
+* Added ci-scripts (v3.0.1)
+* Configured to use Github Actions for CI
+
 ## __R1-1 (2020-05-12)__
 R1-1 is a release based on the master branch.  
 
